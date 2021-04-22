@@ -67,11 +67,13 @@ const usuariosDelete = async(req, res)=>{
     //const user = await User.findByIdAndDelete(id)
 
     // eliminar cambiando estado a false
-    const user = await User.findByIdAndUpdate(id, {state: false}, {new:true})
+    const userDeleted = await User.findByIdAndUpdate(id, {state: false}, {new:true})
+    const activeUser = req.user
 
     res.json({
         msg: 'DELETE request - Controller',
-        deleted: user
+        deleted: userDeleted, 
+        current_user: activeUser.name
     })
 }
 
