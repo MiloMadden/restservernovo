@@ -4,11 +4,52 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Denied</title>
+    <title>Access Google</title>
+    <meta name="google-signin-client_id" content="610602775902-pnu17oea0tm7f2ml0fvht24rs7ivncrq.apps.googleusercontent.com">
 </head>
 <body>
 
-    <h1>Access Denied</h1>
+    <h1>Google Sign in</h1>
+    <hr>
+
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    <hr>
+    <a href="#" onclick="signOut();">Sign out</a>
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script>
+
+        console.log(window.location.hostname.includes('localhost'));
+        const url = (window.location.hostname.includes('localhost')) 
+                    ? 'http://localhost:3000/api/auth/google'
+                    : 'https://paginitafhnode.herokuapp.com/api/auth/google'
+
+
+        function onSignIn(googleUser) {
+
+            //const profile = googleUser.getBasicProfile();
+            const id_token = googleUser.getAuthResponse().id_token;
+            const data = {id_token}
+
+            fetch(url, {
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(data)
+            })
+            .then(res=>res.json())
+            .then(data=>console.log(data))
+
+
+        }
+
+        function signOut() {
+            const auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+            console.log('User signed out.');
+            });
+        }
+    </script>
     
 </body>
 </html>

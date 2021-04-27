@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const {generarJWT} = require('../helpers/generartoken')
+const {googleVerify} = require('../helpers/google-verify')
 
 const login = async(req, res)=>{
 
@@ -50,6 +51,62 @@ const login = async(req, res)=>{
 
 }
 
+const googleS = async(req, res)=>{
+
+    const {id_token} = req.body;
+
+    try {
+
+        const {email, name, image} = await googleVerify(id_token)
+
+        let user = await User.findOne({email})
+
+        if(!user){
+
+            // create
+
+            const data = {
+                name, 
+                email, 
+                password: ':)', 
+                google: true, 
+                image
+            }
+
+
+            user = new User(data)
+            await user.save()
+
+        }
+
+        if(!user.state){
+            return res.status(401).json({
+                msg: 'Usuario borrado'
+            })
+        }
+
+        // generar JWT
+
+        const token = await generarJWT(user._id)
+
+        res.json({
+            user,
+            token
+        })
+
+
+        
+    } catch (error) {
+        
+        res.status(400).json({
+            msg: 'Token de google no valido', 
+            error: error.message
+        })
+
+    }
+
+}
+
 module.exports = {
-    login
+    login, googleS
 }
