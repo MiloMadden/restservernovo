@@ -31,8 +31,18 @@ const existeUsuarioPorId = async(id)=>{
 
 }
 
+const coleccionesPermitidas = (coleccion, arreglo)=>{
+
+    if(!arreglo.includes(coleccion)){
+        throw new Error(`La coleccion ${coleccion} no esta permitida, solo se permiten ${arreglo}`)
+    }
+    return true
+
+}
+
 module.exports = {
     esRoleValido, 
     emailExiste, 
-    existeUsuarioPorId
+    existeUsuarioPorId, 
+    coleccionesPermitidas
 }
